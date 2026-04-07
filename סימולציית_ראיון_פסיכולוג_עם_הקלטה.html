@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>סימולציית ראיון פסיכולוג - קורס טיס</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --bg-primary: #0a1628;
+    --bg-secondary: #122036;
+    --bg-card: #1a2942;
+    --border: #2a3f5f;
+    --accent: #4a9eff;
+    --accent-soft: #2d5a8a;
+    --text-primary: #f0f4f8;
+    --text-secondary: #a8b8d0;
+    --text-muted: #6b7c98;
+    --success: #4ade80;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --level-1: #4ade80;
+    --level-2: #fbbf24;
+    --level-3: #f87171;
+  }
+  
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", "Arial Hebrew", "Arial", sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .header {
+    text-align: center;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+  
+  .header .subtitle {
+    color: var(--text-secondary);
+    font-size: 15px;
+  }
+  
+  .progress-bar {
+    background: var(--bg-secondary);
+    border-radius: 100px;
+    height: 8px;
+    overflow: hidden;
+    margin: 20px 0;
+    border: 1px solid var(--border);
+  }
+  
+  .progress-fill {
+    background: linear-gradient(90deg, var(--accent), #6bb3ff);
+    height: 100%;
+    transition: width 0.5s ease;
+    border-radius: 100px;
+  }
+  
+  .level-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+  
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 600;
+    font-size: 13px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+  }
+  
+  .level-1 .level-badge { color: var(--level-1); border-color: var(--level-1); }
+  .level-2 .level-badge { color: var(--level-2); border-color: var(--level-2); }
+  .level-3 .level-badge { color: var(--level-3); border-color: var(--level-3); }
+  
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
+  
+  .card.welcome {
+    text-align: center;
+  }
+  
+  .card.welcome h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent), #6bb3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .card.welcome p {
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    font-size: 16px;
+  }
+  
+  .card.welcome .features {
+    text-align: right;
+    background: var(--bg-secondary);
+    padding: 20px;
+    border-radius: 12px;
+    margin: 24px 0;
+  }
+  
+  .card.welcome .features h3 {
+    color: var(--accent);
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .card.welcome .features ul {
+    list-style: none;
+  }
+  
+  .card.welcome .features li {
+    padding: 6px 0;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .card.welcome .features li::before {
+    content: "◂ ";
+    color: var(--accent);
+    font-weight: bold;
+  }
+  
+  .question-number {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .question-text {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    line-height: 1.5;
+    color: var(--text-primary);
+  }
+  
+  .question-context {
+    background: var(--bg-secondary);
+    border-right: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+    transition: border-color 0.2s;
+  }
+  
+  textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  
+  textarea::placeholder {
+    color: var(--text-muted);
+  }
+  
+  .word-count {
+    text-align: left;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+  
+  .input-mode-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: var(--bg-secondary);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  
+  .mode-btn {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: auto;
+  }
+  
+  .mode-btn:hover {
+    background: var(--bg-card);
+    transform: none;
+  }
+  
+  .mode-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+  
+  .recording-area {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+  
+  .record-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex: none;
+    min-width: auto;
+    padding: 0;
+  }
+  
+  .record-btn:hover {
+    background: #6bb3ff;
+    transform: scale(1.05);
+  }
+  
+  .record-btn.recording {
+    background: var(--danger);
+    animation: pulse 1.5s infinite;
+  }
+  
+  .record-btn.recording:hover {
+    background: #ff8080;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(248, 113, 113, 0.7); }
+    50% { box-shadow: 0 0 0 15px rgba(248, 113, 113, 0); }
+  }
+  
+  .record-icon {
+    width: 28px;
+    height: 28px;
+    background: white;
+    border-radius: 50%;
+  }
+  
+  .record-btn.recording .record-icon {
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .record-status {
+    margin-top: 16px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    min-height: 22px;
+  }
+  
+  .record-timer {
+    color: var(--accent);
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    margin-top: 8px;
+    min-height: 22px;
+  }
+  
+  .record-timer.recording {
+    color: var(--danger);
+  }
+  
+  .audio-player {
+    width: 100%;
+    margin-top: 16px;
+    border-radius: 8px;
+  }
+  
+  .live-transcript {
+    background: var(--bg-primary);
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 16px;
+    min-height: 60px;
+    text-align: right;
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  
+  .live-transcript:empty::before {
+    content: "התמלול שלך יופיע כאן בזמן הדיבור...";
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .live-transcript .interim {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .feedback-audio {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .feedback-audio h4 {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .speech-tip {
+    background: rgba(74, 158, 255, 0.1);
+    border-right: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  
+  .speech-tip strong {
+    color: var(--accent);
+  }
+  
+  .browser-warning {
+    background: rgba(251, 191, 36, 0.1);
+    border: 1px solid var(--warning);
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    color: var(--warning);
+    font-size: 13px;
+    text-align: center;
+  }
+  
+  .button-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    min-width: 140px;
+  }
+  
+  button:hover {
+    background: #6bb3ff;
+    transform: translateY(-1px);
+  }
+  
+  button:active {
+    transform: translateY(0);
+  }
+  
+  button.secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+  }
+  
+  button.secondary:hover {
+    background: var(--bg-card);
+    border-color: var(--accent);
+  }
+  
+  button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .feedback-section {
+    margin-top: 24px;
+  }
+  
+  .feedback-block {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-right: 3px solid var(--accent);
+  }
+  
+  .feedback-block h3 {
+    color: var(--accent);
+    font-size: 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .feedback-block.warning {
+    border-right-color: var(--warning);
+  }
+  .feedback-block.warning h3 {
+    color: var(--warning);
+  }
+  
+  .feedback-block.danger {
+    border-right-color: var(--danger);
+  }
+  .feedback-block.danger h3 {
+    color: var(--danger);
+  }
+  
+  .feedback-block.success {
+    border-right-color: var(--success);
+  }
+  .feedback-block.success h3 {
+    color: var(--success);
+  }
+  
+  .feedback-block p, .feedback-block li {
+    color: var(--text-secondary);
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  
+  .feedback-block ul {
+    list-style: none;
+    padding-right: 0;
+  }
+  
+  .feedback-block li {
+    padding: 4px 0;
+    padding-right: 18px;
+    position: relative;
+  }
+  
+  .feedback-block li::before {
+    content: "◂";
+    position: absolute;
+    right: 0;
+    color: var(--accent);
+  }
+  
+  .feedback-block.warning li::before { color: var(--warning); }
+  .feedback-block.danger li::before { color: var(--danger); }
+  .feedback-block.success li::before { color: var(--success); }
+  
+  .self-check {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 16px;
+  }
+  
+  .self-check h3 {
+    color: var(--text-primary);
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+  
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .check-item input {
+    margin-top: 4px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+  
+  .level-up {
+    background: linear-gradient(135deg, var(--accent-soft), var(--bg-card));
+    border: 2px solid var(--accent);
+    text-align: center;
+    padding: 40px 32px;
+  }
+  
+  .level-up h2 {
+    color: var(--accent);
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  
+  .level-up p {
+    color: var(--text-primary);
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  
+  .level-up .what-changes {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+    text-align: right;
+  }
+  
+  .level-up .what-changes h3 {
+    color: var(--text-primary);
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  
+  .level-up .what-changes ul {
+    list-style: none;
+  }
+  
+  .level-up .what-changes li {
+    padding: 6px 0;
+    padding-right: 20px;
+    position: relative;
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .level-up .what-changes li::before {
+    content: "▸";
+    position: absolute;
+    right: 0;
+    color: var(--accent);
+  }
+  
+  .completion {
+    text-align: center;
+    padding: 50px 32px;
+  }
+  
+  .completion h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent), #6bb3ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .completion p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .completion .stats {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+  }
+  
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 14px;
+  }
+  
+  .stat-row:last-child {
+    border-bottom: none;
+  }
+  
+  .stat-row strong {
+    color: var(--text-primary);
+  }
+  
+  .your-answer {
+    background: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  
+  .your-answer h4 {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  .your-answer p {
+    color: var(--text-secondary);
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+  
+  .timer {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  
+  .timer.urgent {
+    color: var(--danger);
+    border: 1px solid var(--danger);
+  }
+  
+  @media (max-width: 600px) {
+    body { padding: 12px; }
+    .card { padding: 20px; }
+    .question-text { font-size: 18px; }
+    .header h1 { font-size: 22px; }
+    .button-row { flex-direction: column; }
+    button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+  <div class="container" id="app"></div>
+
+<script>
+// ============================================
+// QUESTION DATABASE
+// ============================================
+
+const questionData = {
+  level1: {
+    name: "רמה 1 - היכרות",
+    description: "שאלות פתיחה קלאסיות. המטרה: להתרגל לפורמט, לתרגל סיפור עצמי.",
+    questions: [
+      {
+        q: "ספרי לי קצת על עצמך.",
+        context: "זו השאלה הראשונה כמעט בכל ראיון. אל תזלזלי בה - היא מעצבת את הרושם הראשוני.",
+        evaluating: "הפסיכולוגית בודקת כאן את היכולת שלך להציג את עצמך בבהירות, מה את בוחרת להדגיש (וזה אומר עלייך הרבה), עד כמה את חופשייה מול עצמך, וכיצד את מארגנת את הסיפור האישי שלך.",
+        pitfalls: [
+          "להקריא רשימת קורות חיים יבשה (גיל, יישוב, ציונים, פעילויות)",
+          "להישמע מתורגלת מדי - כאילו שיננת תשובה",
+          "לדבר יותר מדי או פחות מדי (אופטימלי: 90 שניות עד 2 דקות)",
+          "להתחיל ב'אז... אהמ... מה לספר?'"
+        ],
+        dos: [
+          "לפתוח במשפט אחד שמסכם מי את (לא מה עשית)",
+          "להזכיר 2-3 דברים שמייצגים אותך באמת - תחום עניין, ערך, חוויה מעצבת",
+          "לסיים בקישור למה שהוביל אותך לשאיפה לקורס טיס",
+          "לדבר בקצב טבעי ולהביט בעיניים"
+        ],
+        selfCheck: [
+          "האם התשובה שלי נשמעה אותנטית או מתורגלת?",
+          "האם הזכרתי דברים שמייחדים אותי, או דברים גנריים?",
+          "האם הצלחתי לסיים בנקודה ברורה במקום להישמע כמתפזרת?"
+        ]
+      },
+      {
+        q: "למה את רוצה להיות טייסת בחיל האוויר?",
+        context: "זו השאלה הקריטית ביותר. תשובה חלשה כאן יכולה להפיל את כל הראיון.",
+        evaluating: "הפסיכולוגית מחפשת מוטיבציה פנימית אמיתית, ולא חיצונית. היא רוצה לראות שחשבת על זה לעומק, שאת מודעת למשמעות של 10 שנים, ושיש לך סיפור אישי שמוביל לכאן - לא רק סיסמאות.",
+        pitfalls: [
+          "תשובות גנריות: 'רוצה לתרום למדינה', 'תמיד חלמתי על זה'",
+          "להתמקד ביוקרה, בכבוד, או ב'להיות הכי טובה'",
+          "התלהבות מזויפת ומופרזת",
+          "לא להזכיר את האתגרים והמחיר האישי"
+        ],
+        dos: [
+          "לחבר לסיפור אישי קונקרטי - מתי זה התחיל, איזה רגע הצית את זה",
+          "להזכיר את ההבנה שלך לגבי 3 שנות הקורס + 7 שנות הקבע",
+          "לדבר על מה שמושך אותך בתפקיד עצמו, לא בתואר",
+          "להראות מודעות לאחריות ולשליחות, בלי דרמה"
+        ],
+        selfCheck: [
+          "האם מישהי אחרת יכלה לתת בדיוק את אותה תשובה?",
+          "האם הזכרתי את המחויבות לעשור הקרוב?",
+          "האם דיברתי על התפקיד או על התואר?"
+        ]
+      },
+      {
+        q: "ספרי לי על המשפחה שלך.",
+        context: "השאלה הזו מיועדת לבחון את הסביבה שלך, יחסים בתוך הבית, ויכולת התמיכה של המשפחה.",
+        evaluating: "הפסיכולוגית מעריכה את היציבות המשפחתית שלך, את האופן שבו את מדברת על אנשים קרובים, ואת הדינמיקה הכללית בבית. זה גם בודק את היכולת שלך לדבר על אנשים בכבוד ובמאוזנות.",
+        pitfalls: [
+          "לבקר את המשפחה או להישמע ממורמרת",
+          "לתאר משפחה 'מושלמת' באופן שנשמע מזויף",
+          "להיכנס למורכבויות רגשיות עמוקות שלא מתאימות לראיון",
+          "לתאר רק עובדות יבשות בלי שום צבע"
+        ],
+        dos: [
+          "תיאור מאוזן: מי במשפחה, מה כל אחד עושה, מה היחסים",
+          "להזכיר תמיכה משפחתית בלי להישמע תלויה",
+          "לציין דמות משמעותית במשפחה (אבל לא רק - ולא על חשבון שאר המשפחה)",
+          "לדבר על ערכים שהמשפחה הקנתה לך"
+        ],
+        selfCheck: [
+          "האם דיברתי על המשפחה שלי בכבוד וביושר?",
+          "האם נמנעתי מלהישמע תלויה או, להפך, מנותקת?",
+          "האם הצלחתי להעביר את התמונה האמיתית בלי לייפות?"
+        ]
+      },
+      {
+        q: "מה את חושבת שהן החוזקות הכי משמעותיות שלך?",
+        context: "זו לא הזדמנות להתרברב - אבל גם לא להמעיט בערך עצמך.",
+        evaluating: "הפסיכולוגית בודקת מודעות עצמית חיובית, ביטחון בלי יהירות, והיכולת שלך לגבות הצהרות בדוגמאות אמיתיות. תשובה גנרית בלי דוגמאות = תשובה חלשה.",
+        pitfalls: [
+          "להגיד 'אני אחראית, חרוצה ואכפתית' - ולעצור שם",
+          "להגיד 'אני טובה בהכל' או להפך, 'יש לי הרבה חוזקות, קשה לבחור'",
+          "להישמע יהירה או מנופחת",
+          "לבחור חוזקות שלא מתאימות לתפקיד טייסת"
+        ],
+        dos: [
+          "לבחור 2-3 חוזקות אמיתיות, לא יותר",
+          "לכל חוזקה - דוגמה קונקרטית מהחיים שלך",
+          "לבחור חוזקות שרלוונטיות לתפקיד: יכולת למידה, התמודדות עם לחץ, מנהיגות, אחריות",
+          "להישמע בטוחה אבל לא יהירה - להציג, לא להתפאר"
+        ],
+        selfCheck: [
+          "האם נתתי דוגמה קונקרטית לכל חוזקה שציינתי?",
+          "האם החוזקות שבחרתי באמת מאפיינות אותי או נשמעות 'נכון לראיון'?",
+          "האם נשמעתי בטוחה בלי להישמע יהירה?"
+        ]
+      },
+      {
+        q: "ומה החולשות שלך?",
+        context: "המוקש הקלאסי. תשובה לא נכונה כאן מפילה הרבה מועמדות.",
+        evaluating: "הפסיכולוגית בודקת אם יש לך מודעות עצמית כנה - אם את מסוגלת להסתכל על עצמך באופן ביקורתי. תשובות מתחמקות נחשבות לדגל אדום ענק.",
+        pitfalls: [
+          "'החולשה שלי היא שאני פרפקציוניסטית' - הפסיכולוגית שמעה את זה אלפי פעמים",
+          "'אני עובדת קשה מדי' - אותו דבר",
+          "'אין לי חולשות מיוחדות'",
+          "להתמוטט ולהתחיל לפרט את כל הפגמים שלך"
+        ],
+        dos: [
+          "לבחור חולשה אמיתית, לא קלישאה",
+          "להראות שאת מודעת אליה (זה החלק הכי חשוב)",
+          "לתאר איך את מתמודדת איתה - מה עשית כדי להשתפר",
+          "לסיים בנימה של תהליך, לא של פגם נצחי"
+        ],
+        selfCheck: [
+          "האם החולשה שבחרתי היא אמיתית או קלישאה?",
+          "האם הראיתי מודעות עצמית?",
+          "האם הסברתי מה את עושה כדי להתמודד עם זה?"
+        ]
+      },
+      {
+        q: "מה את עושה בזמן הפנוי? מה התחומי עניין שלך?",
+        context: "שאלה 'קלילה' לכאורה - אבל גם היא בודקת אותך.",
+        evaluating: "הפסיכולוגית רואה כאן את האיזון בחיים שלך, את הסקרנות, את ההתמדה בדברים שאת אוהבת, ואת היכולת לדבר עליהם בהתלהבות. תחביב שאת באמת מחוברת אליו - עדיף על רשימה ארוכה של דברים שטחיים.",
+        pitfalls: [
+          "רשימת תחביבים בלי עומק: 'אני אוהבת לקרוא, לרוץ, לפגוש חברים'",
+          "להגיד שאין לך זמן פנוי בגלל הלימודים",
+          "לבחור תחביבים 'נכונים לראיון' שלא קשורים אלייך באמת",
+          "להישמע משועממת או חסרת תשוקה לכלום"
+        ],
+        dos: [
+          "לבחור 1-2 דברים שאת באמת מחוברת אליהם",
+          "לתאר מה את אוהבת בהם, איך זה החל, מה זה נותן לך",
+          "להראות עומק ומחויבות לאורך זמן",
+          "לחבר לערכים או לתכונות אופי שזה מפתח"
+        ],
+        selfCheck: [
+          "האם דיברתי על משהו שאני באמת אוהבת?",
+          "האם הצלחתי להעביר תשוקה אמיתית?",
+          "האם הסיפור שלי הראה משהו על מי שאני?"
+        ]
+      }
+    ]
+  },
+  
+  level2: {
+    name: "רמה 2 - העמקה",
+    description: "שאלות חוקרות יותר. הפסיכולוגית מתחילה לחפור.",
+    questions: [
+      {
+        q: "ספרי לי על פעם שכשלת במשהו חשוב לך.",
+        context: "אם תגידי שלא היה לך כישלון אמיתי - זה דגל אדום ענק.",
+        evaluating: "הפסיכולוגית בודקת את היכולת שלך לקחת אחריות, לעשות רפלקציה כנה, וללמוד מטעויות. בקורס טיס יהיו לך הרבה תחקירים אכזריים - היא רוצה לראות שאת מסוגלת.",
+        pitfalls: [
+          "'לא היה לי כישלון אמיתי' - דגל אדום מובהק",
+          "להאשים אחרים: 'המורה לא הסבירה טוב', 'החברים אכזבו אותי'",
+          "לבחור 'כישלון' מזויף - משהו שכולם יסכימו שזה לא באמת כישלון",
+          "להתמוטט ולהציג את הכישלון בלי שום למידה"
+        ],
+        dos: [
+          "לבחור כישלון אמיתי - שבאמת כאב לך",
+          "לקחת אחריות מלאה על החלק שלך בכישלון",
+          "לתאר מה הרגשת ואיך הגבת",
+          "להראות ספציפית מה למדת ואיך זה שינה אותך"
+        ],
+        selfCheck: [
+          "האם בחרתי כישלון אמיתי או 'נוח'?",
+          "האם לקחתי אחריות אישית על מה שקרה?",
+          "האם הראיתי למידה קונקרטית, לא קלישאות?"
+        ]
+      },
+      {
+        q: "תארי קונפליקט משמעותי שהיה לך עם חברה קרובה.",
+        context: "השאלה בודקת מיומנויות חברתיות ובגרות רגשית.",
+        evaluating: "הפסיכולוגית בודקת אינטליגנציה רגשית, יכולת לראות נקודות מבט אחרות, ויכולת להכיל מורכבות ביחסים. בצוות אוויר תצטרכי לעבוד עם אנשים שונים מאוד.",
+        pitfalls: [
+          "להציג את הצד השני כרע ואותך כצדיקה",
+          "'אין לי קונפליקטים, כולם אוהבים אותי'",
+          "להישמע נוקמת או ממורמרת",
+          "להציג קונפליקט שטחי שלא דרש שום עומק רגשי"
+        ],
+        dos: [
+          "לבחור קונפליקט אמיתי שהיה לו רגש",
+          "להציג את שני הצדדים בכבוד",
+          "להכיר בחלק שלך בסכסוך",
+          "לתאר איך פתרתם את זה (או למדתם ממנו)"
+        ],
+        selfCheck: [
+          "האם הצגתי את הצד השני בהוגנות?",
+          "האם לקחתי אחריות על החלק שלי?",
+          "האם הראיתי בגרות רגשית, לא דרמה?"
+        ]
+      },
+      {
+        q: "איך את מתמודדת עם לחץ ומועדים? תני דוגמה.",
+        context: "שאלה קריטית - בכל יום של טייסת יש לחץ של ממש.",
+        evaluating: "הפסיכולוגית בודקת אסטרטגיות התמודדות, יציבות נפשית, ויכולת תפקוד תחת לחץ. היא רוצה לראות שאת מודעת ללחץ שלך ושיש לך כלים אמיתיים להתמודד.",
+        pitfalls: [
+          "'אני לא מרגישה לחץ' - לא אמין ולא בריא",
+          "אסטרטגיות לא בריאות: לאכול, לבכות, לבעוט",
+          "לתאר תיאוריה ('אני מנסה לארגן את הזמן') בלי דוגמה",
+          "להישמע כאילו הלחץ משתק אותך"
+        ],
+        dos: [
+          "להכיר בכך שאת מרגישה לחץ - זה אנושי",
+          "לתאר כלי קונקרטי שאת משתמשת בו",
+          "לתת דוגמה ספציפית מהחיים שלך",
+          "להראות שאת מצליחה לתפקד גם תחת לחץ"
+        ],
+        selfCheck: [
+          "האם נתתי דוגמה קונקרטית?",
+          "האם הראיתי שאני יודעת שלחץ קיים, ויש לי דרכים אמיתיות להתמודד?",
+          "האם הראיתי תוצאה - שהצלחתי לתפקד?"
+        ]
+      },
+      {
+        q: "תני לי דוגמה למצב שבו הובלת קבוצה.",
+        context: "מנהיגות היא אחת משלוש התכונות החשובות ביותר לטייסים.",
+        evaluating: "הפסיכולוגית בודקת מנהיגות מודגמת (לא מוצהרת), יכולת לקחת אחריות, ויכולת להכיר בתרומה של אחרים. היא רוצה לראות מנהיגות ולא 'בוסיות'.",
+        pitfalls: [
+          "סיפור מומצא או מוגזם",
+          "'אני עשיתי הכל, הם רק הצטרפו'",
+          "לבחור דוגמה קטנה ושטחית",
+          "להתעלם מהאתגרים שהיו בדרך"
+        ],
+        dos: [
+          "לבחור דוגמה אמיתית עם תוצאה מוחשית",
+          "לתאר את האתגר, את הפתרון שיזמת, ואת התוצאה",
+          "להזכיר את התרומה של חברי הצוות שלך",
+          "לדבר על מה למדת על עצמך כמנהיגה"
+        ],
+        selfCheck: [
+          "האם הדוגמה שלי באמת הראתה מנהיגות?",
+          "האם הזכרתי את הצוות, או רק את עצמי?",
+          "האם הראיתי תוצאה ספציפית?"
+        ]
+      },
+      {
+        q: "אם הייתי שואלת את החברים הטובים שלך מה היו אומרים עלייך - מה הם היו אומרים?",
+        context: "שאלה חכמה - היא בודקת מודעות עצמית מנקודת מבט חיצונית.",
+        evaluating: "הפסיכולוגית בודקת אם את מסוגלת להסתכל על עצמך מבחוץ. היא גם רוצה לראות שאת מכבדת את החברים שלך מספיק כדי באמת להקשיב למה שהם אומרים עלייך.",
+        pitfalls: [
+          "רק שבחים: 'הם היו אומרים שאני נהדרת'",
+          "רק ביקורת: 'הם היו מתלוננים שאני שתלטנית'",
+          "תשובות גנריות בלי דוגמאות",
+          "להגיד 'אני לא יודעת מה הם היו אומרים'"
+        ],
+        dos: [
+          "לתת 2-3 דברים - חלקם חיוביים אמיתיים, חלקם דברים שניתן לשפר",
+          "להישמע כאילו את באמת חושבת על החברים שלך",
+          "להזכיר תכונה אחת שאת יודעת שלא תמיד נוחה לאחרים",
+          "לסיים בנימה חיובית של מודעות, לא הגנתיות"
+        ],
+        selfCheck: [
+          "האם נתתי תמונה מאוזנת ולא רק שבחים?",
+          "האם הראיתי שאני מקשיבה למה שאחרים אומרים עליי?",
+          "האם נשמעתי כנה?"
+        ]
+      },
+      {
+        q: "מה ההורים שלך חושבים על השאיפה שלך לקורס טיס?",
+        context: "שאלה שבודקת את הדינמיקה המשפחתית סביב ההחלטה הגדולה הזו.",
+        evaluating: "הפסיכולוגית בודקת אם יש תמיכה משפחתית, אם את עצמאית בהחלטה שלך, ואיך את מתמודדת עם דעות שונות. תמיכה משפחתית חשובה - אבל גם עצמאות.",
+        pitfalls: [
+          "'הם דוחפים אותי לזה' - לחץ חיצוני זה דגל אדום",
+          "'הם מתנגדים לי' בלי הקשר - חוסר תמיכה משפחתית מדאיג",
+          "לתאר אדישות מוחלטת מצד ההורים",
+          "להישמע תלויה: 'אם הם לא יסכימו, אני לא אלך'"
+        ],
+        dos: [
+          "לתאר את העמדה שלהם בכנות",
+          "להראות שזה ההחלטה שלך, גם אם הם תומכים",
+          "אם יש חששות מצידם - להראות שאת מבינה אותם",
+          "לסיים בכך שאת בטוחה בהחלטה שלך"
+        ],
+        selfCheck: [
+          "האם הראיתי שזו ההחלטה שלי, לא של ההורים שלי?",
+          "האם תיארתי את העמדה שלהם בכבוד?",
+          "האם נשמעתי עצמאית בלי להישמע מנותקת מהמשפחה?"
+        ]
+      },
+      {
+        q: "מה תעשי אם לא תתקבלי לקורס טיס?",
+        context: "שאלה שבודקת גם מוטיבציה וגם יציבות.",
+        evaluating: "הפסיכולוגית בודקת שני דברים בו זמנית: עד כמה את מחויבת (אם זה ממש לא משנה לך - המוטיבציה נמוכה), ועד כמה את יציבה (אם תהיי 'הרוסה' - את לא חזקה מספיק). היא רוצה איזון.",
+        pitfalls: [
+          "'אני אהיה הרוסה, החיים שלי ייגמרו'",
+          "'לא איכפת לי, יש לי תוכניות אחרות'",
+          "להישמע מאופסת מדי - 'בסדר, אעשה משהו אחר'",
+          "להגיד 'אני בטוחה שאתקבל'"
+        ],
+        dos: [
+          "להכיר באכזבה - זה אנושי",
+          "להראות יציבות נפשית - אכזבה אבל לא התמוטטות",
+          "לדבר על תוכניות נוספות שיש לך לתרומה משמעותית בצבא",
+          "להראות שתמשיכי להיות מי שאת, גם בלי הקורס"
+        ],
+        selfCheck: [
+          "האם הראיתי מחויבות בלי להישמע נואשת?",
+          "האם הראיתי יציבות בלי להישמע אדישה?",
+          "האם הזכרתי תוכנית חלופית שמלמדת על המוטיבציה הכללית שלי לתרום?"
+        ]
+      },
+      {
+        q: "ספרי לי על אדם שמשפיע עלייך.",
+        context: "השאלה הזו חושפת את הערכים שלך דרך מי שאת בוחרת להעריץ.",
+        evaluating: "הפסיכולוגית רוצה לראות אילו תכונות את מעריכה אצל אנשים אחרים, מי הדמויות שעיצבו אותך, ועד כמה את מסוגלת ללמוד מאחרים.",
+        pitfalls: [
+          "לבחור ידוען או דמות פופולרית בלי קשר אישי",
+          "לבחור הורה ולתאר באופן גנרי",
+          "להציג את עצמך בעקיפין במקום לדבר עליו/עליה",
+          "לא להסביר למה דווקא הוא/היא"
+        ],
+        dos: [
+          "לבחור אדם שאת באמת מכירה או למדת ממנו משהו ספציפי",
+          "לתאר תכונה ספציפית שאת מעריכה אצלו",
+          "להסביר איך זה השפיע עלייך בצורה מוחשית",
+          "להראות שאת לומדת מאנשים אחרים"
+        ],
+        selfCheck: [
+          "האם הסברתי דבר ספציפי שלמדתי מהאדם הזה?",
+          "האם דיברתי עליו/עליה ולא רק על עצמי?",
+          "האם הראיתי למה דווקא האדם הזה?"
+        ]
+      }
+    ]
+  },
+  
+  level3: {
+    name: "רמה 3 - אתגר",
+    description: "שאלות לחוצות, עימותיות, וקשות. כאן בודקים אם את שורדת.",
+    questions: [
+      {
+        q: "אני קוראת את מה שכתבת על עצמך, ובאמת - אני לא מוצאת בך שום דבר מיוחד. תשכנעי אותי שאת לא עוד אחת בתור.",
+        context: "אזהרה: זו שאלה תוקפנית במכוון. הפסיכולוגית בודקת איך את מגיבה.",
+        evaluating: "זה מבחן עמידות תחת לחץ פסיכולוגי. הפסיכולוגית רוצה לראות שאת לא מתפרקת, לא מתפרצת, ולא מתחנפת. היא רוצה לראות שאת יכולה להגן על עצמך ברוגע ובכבוד.",
+        pitfalls: [
+          "להתפרץ או להעלב",
+          "להתחיל לבכות או להתמוטט",
+          "להסכים בעצב: 'את צודקת, אולי באמת אני לא מתאימה'",
+          "להיכנס להגנה אגרסיבית"
+        ],
+        dos: [
+          "לקחת נשימה עמוקה. לא להגיב מיד",
+          "לקבל את האתגר ברוגע: 'זו שאלה הוגנת'",
+          "להציג בבטחון מה את מביאה - בלי התנצלות ובלי יהירות",
+          "לסיים בהבעת ביטחון רגוע במה שאת"
+        ],
+        selfCheck: [
+          "האם שמרתי על קור רוח?",
+          "האם הצגתי את עצמי בבטחון בלי להיכנס להגנה?",
+          "האם נשמעתי בוגרת ולא ילדותית?"
+        ]
+      },
+      {
+        q: "כשאת מדברת על המוטיבציה שלך, אני שומעת מילים שאת חזרת עליהן הרבה פעמים. נשמע מתורגל. תני לי משהו אמיתי.",
+        context: "הפסיכולוגית מאתגרת את האותנטיות שלך. היא חושדת שאת משחקת.",
+        evaluating: "זה מבחן אותנטיות. הפסיכולוגית בודקת אם יש לך גישה לרגש אמיתי מתחת לתשובות המוכנות, ואם את מסוגלת לעצור ולחפור עמוק יותר.",
+        pitfalls: [
+          "להתעקש על אותה תשובה: 'אבל זה באמת מה שאני מרגישה!'",
+          "להתבלבל ולהתחיל לגמגם",
+          "להעליב: 'אני לא משקרת'",
+          "לקפוא ולא להגיד כלום"
+        ],
+        dos: [
+          "לעצור. לקחת שנייה. להגיד 'את צודקת, תני לי רגע לחשוב'",
+          "לחפש דבר ספציפי, רגש אמיתי, רגע אישי",
+          "לדבר יותר אישית, פחות 'נכון לראיון'",
+          "להיות מוכנה לחשוף משהו פגיע יותר"
+        ],
+        selfCheck: [
+          "האם הצלחתי לעצור ולחפש משהו אמיתי?",
+          "האם נתתי תשובה אישית יותר ופחות גנרית?",
+          "האם הייתי מוכנה להיות פגיעה?"
+        ]
+      },
+      {
+        q: "מה הדבר שאת הכי מתביישת בו בעצמך?",
+        context: "שאלה אינטימית מאוד - והפסיכולוגית רוצה לראות אם את מסוגלת.",
+        evaluating: "הפסיכולוגית בודקת כנות, אומץ ומודעות עצמית. היא לא מצפה לסוד אפל - היא רוצה לראות שאת מסוגלת לדבר על משהו שלא קל לדבר עליו.",
+        pitfalls: [
+          "'אין לי דבר כזה' - לא אמין",
+          "להמציא משהו תמים מדי",
+          "לחשוף משהו הרסני שיגרום לפסילה",
+          "להתמוטט בזמן הסיפור"
+        ],
+        dos: [
+          "לבחור משהו אמיתי - אבל לא הרסני",
+          "להראות שאת מודעת לזה ושאת עובדת עליו",
+          "לקחת אחריות בלי להיכנס לדרמה",
+          "לסיים במשהו שלמדת או שינית"
+        ],
+        selfCheck: [
+          "האם הייתי כנה אבל גם מודעת למה שאני חושפת?",
+          "האם בחרתי משהו אמיתי בלי שזה יהיה הרסני?",
+          "האם סיימתי בלמידה ולא בדרמה?"
+        ]
+      },
+      {
+        q: "10 שנים בצבא זה זמן ארוך. מה יקרה אם בעוד 5 שנים תרצי פתאום לעזוב הכל ולטייל בעולם?",
+        context: "שאלה שבודקת מחויבות לטווח ארוך ובגרות.",
+        evaluating: "הפסיכולוגית רוצה לראות שחשבת על המחויבות הארוכה הזו ברצינות, שאת מודעת לאתגרים שלה, ושיש לך בגרות להבין שלא הכל יהיה ורוד.",
+        pitfalls: [
+          "'זה לעולם לא יקרה לי' - לא אמין",
+          "'אז אעזוב' - חוסר מחויבות מובהק",
+          "להגיד שאת לא חושבת על החיים מעבר לקורס",
+          "להישמע נאיבית לגבי האתגר"
+        ],
+        dos: [
+          "להכיר באתגר: 'זו שאלה שחשבתי עליה'",
+          "להראות שאת מבינה שיהיו רגעים קשים",
+          "להזכיר כלים שיעזרו לך - תמיכה משפחתית, ערכים, מטרה",
+          "להראות שהמחויבות שלך מבוססת על משהו עמוק יותר מהתלהבות רגעית"
+        ],
+        selfCheck: [
+          "האם הראיתי שחשבתי על המחויבות הזו ברצינות?",
+          "האם נשמעתי בוגרת ולא נאיבית?",
+          "האם הצגתי את המחויבות שלי כעמוקה ולא רק כהתלהבות?"
+        ]
+      },
+      {
+        q: "אני שמה לב שכל פעם שאני שואלת אותך שאלה קשה, את משנה את עמדתך קצת. את לא נשמעת לי בטוחה במה שאת באמת רוצה.",
+        context: "אזהרה: זו אחת השאלות החשובות. הפסיכולוגית בודקת עקביות.",
+        evaluating: "זה המבחן הגדול ביותר. הפסיכולוגית בודקת אם את מסוגלת להחזיק עמדה תחת לחץ. אם תשני את עמדתך כתגובה לאתגר - אישרת את החשד שלה. עקביות חשובה יותר ממוטיבציה.",
+        pitfalls: [
+          "לשנות שוב את העמדה כדי לפייס אותה",
+          "להיכנס להגנה אגרסיבית",
+          "לפרוש ולהגיד 'אז בעצם אני לא בטוחה'",
+          "להתחיל להתנצל"
+        ],
+        dos: [
+          "לעצור ולקחת נשימה",
+          "לחזור על העמדה הראשונית שלך בבטחון רגוע",
+          "להסביר שאת לא משנה את העמדה - את רק מנסה לענות בדיוק על השאלות",
+          "להראות עקביות בין מה שכתבת בעבר לבין מה שאת אומרת עכשיו"
+        ],
+        selfCheck: [
+          "האם החזקתי בעמדה הראשונית שלי?",
+          "האם נשמעתי בטוחה בלי להיכנס להגנה?",
+          "האם הצלחתי להישאר רגועה?"
+        ]
+      },
+      {
+        q: "אם הייתי שואלת את החברה הכי טובה שלך מה הדבר הכי גרוע אצלך - מה היא הייתה אומרת?",
+        context: "שאלה שבודקת מודעות עצמית כנה.",
+        evaluating: "הפסיכולוגית רוצה לראות שאת מודעת לחולשות אמיתיות שלך - לא קלישאות. אם תיתני תשובה גנרית, היא תדע שאת לא באמת מקשיבה למה שאומרים עלייך.",
+        pitfalls: [
+          "'היא הייתה אומרת שאני פרפקציוניסטית'",
+          "'אין לה מה לומר עליי רע'",
+          "להמציא משהו תמים",
+          "להתמוטט ולהתחיל לפרט פגמים"
+        ],
+        dos: [
+          "לבחור משהו ספציפי שאת יודעת שכן יכול להיאמר עלייך",
+          "להראות שאת מקשיבה למה שאחרים אומרים",
+          "להישאר רגועה ולא הגנתית",
+          "להוסיף שאת עובדת על זה"
+        ],
+        selfCheck: [
+          "האם בחרתי משהו אמיתי וספציפי?",
+          "האם הראיתי שאני מקשיבה למה שאחרים אומרים עליי?",
+          "האם נשארתי רגועה?"
+        ]
+      },
+      {
+        q: "אני אגיד לך משהו שאולי יקשה עליך: על סמך מה ששמעתי עד עכשיו, אני לא חושבת שאת מתאימה לקורס. מה את אומרת על זה?",
+        context: "שאלה שמיועדת לראות איך את מגיבה לדחייה אפשרית. הקלאסיקה.",
+        evaluating: "זה מבחן הסיום. הפסיכולוגית רוצה לראות איך את מגיבה לדחייה - בלי לבכות, בלי להיכנע, בלי להתפרץ. היא רוצה לראות שאת בוגרת מספיק להגיב באומץ ובכבוד.",
+        pitfalls: [
+          "להתחיל לבכות",
+          "להתחנן: 'בבקשה, תני לי הזדמנות'",
+          "להיכנס לויכוח אגרסיבי",
+          "להסכים מיד: 'את צודקת, סליחה'"
+        ],
+        dos: [
+          "לקחת נשימה. לא להגיב מיד",
+          "להגיב ברוגע: 'זה קשה לשמוע. אני יכולה לשאול מה הוביל אותך למסקנה הזו?'",
+          "להציע נקודות נוספות שאולי לא הצלחת להעביר",
+          "לסיים בבטחון רגוע, בלי לאיים ובלי להתמוטט"
+        ],
+        selfCheck: [
+          "האם שמרתי על קור רוח?",
+          "האם שאלתי מה הוביל למסקנה במקום להיכנס להגנה מיד?",
+          "האם הראיתי בגרות במקום לבכות או להתחנן?"
+        ]
+      },
+      {
+        q: "מה יקרה אם תגיעי לקורס וכל החיילים שם יהיו טובים יותר ממך?",
+        context: "שאלה שבודקת איך את מתמודדת עם תחרות ועם להיות 'הקטנה'.",
+        evaluating: "הפסיכולוגית בודקת בגרות, יציבות עצמית, ויחס לתחרות. בקורס טיס תהיי כל הזמן בסביבה תחרותית מאוד - היא רוצה לראות שאת מסוגלת.",
+        pitfalls: [
+          "'זה לא יקרה' - חוסר ריאליות",
+          "'אז אעזוב' - חוסר עמידות",
+          "'אני אהיה הכי טובה' - יהירות",
+          "להישמע מאוימת או לחוצה"
+        ],
+        dos: [
+          "להכיר באפשרות הזו - היא ריאלית",
+          "להגיד שזה אתגר אבל גם הזדמנות ללמוד",
+          "להראות שאת לומדת מאנשים שטובים ממך, לא מתחרה איתם",
+          "לדבר על תהליך, לא על תוצאה מיידית"
+        ],
+        selfCheck: [
+          "האם הכרתי באפשרות במקום להכחיש אותה?",
+          "האם הצגתי את התחרות כהזדמנות ולא איום?",
+          "האם נשמעתי בוגרת ולא מאוימת?"
+        ]
+      }
+    ]
+  }
+};
+
+// ============================================
+// STATE & RENDERING
+// ============================================
+
+let state = {
+  screen: 'welcome',
+  currentLevel: 1,
+  currentQuestionIndex: 0,
+  answers: { level1: [], level2: [], level3: [] },
+  audioRecordings: { level1: [], level2: [], level3: [] },
+  inputMode: 'voice'
+};
+
+let mediaRecorder = null;
+let audioChunks = [];
+let recognition = null;
+let recordingStartTime = null;
+let timerInterval = null;
+let currentAudioBlob = null;
+let currentTranscript = '';
+let interimTranscript = '';
+
+const app = document.getElementById('app');
+
+function render() {
+  if (state.screen === 'welcome') renderWelcome();
+  else if (state.screen === 'levelIntro') renderLevelIntro();
+  else if (state.screen === 'question') renderQuestion();
+  else if (state.screen === 'feedback') renderFeedback();
+  else if (state.screen === 'completion') renderCompletion();
+  window.scrollTo(0, 0);
+}
+
+function renderWelcome() {
+  app.innerHTML = `
+    <div class="header">
+      <h1>סימולציית ראיון פסיכולוג</h1>
+      <div class="subtitle">הכנה לראיון בקורס טיס - חיל האוויר</div>
+    </div>
+    
+    <div class="card welcome">
+      <h2>שלום, וברוכה הבאה</h2>
+      <p>הסימולציה הזו בנויה משלוש רמות הדרגתיות של קושי, ועוקבת אחרי מבנה הראיון האמיתי בירפ"א ב'.</p>
+      
+      <div class="features">
+        <h3>איך זה עובד?</h3>
+        <ul>
+          <li>שלוש רמות: היכרות, העמקה, ואתגר</li>
+          <li>ניתן להקליט את התשובות שלך בקול - עם תמלול אוטומטי לעברית בזמן אמת</li>
+          <li>אחרי כל תשובה את יכולה להאזין לעצמך - זה הכלי הכי חזק לזיהוי גמגומים, היסוסים וטון לא בטוח</li>
+          <li>בכל שאלה את מקבלת פרטים על מה הפסיכולוגית בעצם בודקת</li>
+          <li>אחרי שאת עונה - את מקבלת ניתוח מפורט: מלכודות, מה לעשות, ומה לא</li>
+          <li>23 שאלות בסך הכל - תכנני בערך 60-90 דקות</li>
+        </ul>
+      </div>
+      
+      <div class="features">
+        <h3>שלושה כללים חשובים לפני שמתחילים:</h3>
+        <ul>
+          <li>הסימולציה לא מחליפה את ההכנה האמיתית עם הפסיכולוגים. היא חלק מהמערך</li>
+          <li>תעני בכנות אמיתית - לא כפי שאת חושבת ש"נכון לראיון". זאת התרגול היחיד שיעזור</li>
+          <li>בפעם הראשונה הדפדפן יבקש אישור לגישה למיקרופון - אשרי כדי שההקלטה תעבוד</li>
+        </ul>
+      </div>
+      
+      <div class="button-row">
+        <button onclick="startLevel(1)">בואי נתחיל</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderLevelIntro() {
+  const level = questionData['level' + state.currentLevel];
+  const colors = { 1: '#4ade80', 2: '#fbbf24', 3: '#f87171' };
+  const changes = {
+    1: [
+      'שאלות פתיחה קלאסיות',
+      'הקצב נעים, יש זמן לחשוב',
+      'התשובות שלך בנויות לבסס את הזהות שלך'
+    ],
+    2: [
+      'שאלות חוקרות יותר',
+      'הפסיכולוגית מתחילה לחפור לעומק',
+      'דורשות דוגמאות קונקרטיות מהחיים שלך',
+      'מתחילות לבדוק עקביות עם הראיון הקודם'
+    ],
+    3: [
+      'שאלות מאתגרות, חלקן עימותיות',
+      'לחץ פסיכולוגי מכוון - אסור להישבר',
+      'הפסיכולוגית עשויה לתקוף את האותנטיות שלך',
+      'כאן עקביות חשובה יותר ממוטיבציה',
+      'זה השלב שבו רוב המועמדים נכשלים'
+    ]
+  };
+  
+  app.innerHTML = `
+    <div class="container level-${state.currentLevel}">
+      <div class="card level-up">
+        <h2>${level.name}</h2>
+        <p>${level.description}</p>
+        
+        <div class="what-changes">
+          <h3>מה משתנה ברמה הזו:</h3>
+          <ul>
+            ${changes[state.currentLevel].map(c => `<li>${c}</li>`).join('')}
+          </ul>
+        </div>
+        
+        <p>${level.questions.length} שאלות ברמה הזו.</p>
+        
+        <div class="button-row">
+          <button onclick="beginQuestions()">להתחיל את השאלות</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderQuestion() {
+  const level = questionData['level' + state.currentLevel];
+  const question = level.questions[state.currentQuestionIndex];
+  const totalQuestions = level.questions.length;
+  const progress = ((state.currentQuestionIndex) / totalQuestions) * 100;
+  
+  const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+  const hasSpeechRecognition = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+  const isFileProtocol = window.location.protocol === 'file:';
+  
+  app.innerHTML = `
+    <div class="container level-${state.currentLevel}">
+      <div class="header">
+        <h1>סימולציית ראיון פסיכולוג</h1>
+        <div class="level-indicator">
+          <span class="level-badge">${level.name}</span>
+          <span>שאלה ${state.currentQuestionIndex + 1} מתוך ${totalQuestions}</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%"></div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="question-number">שאלת הפסיכולוגית</div>
+        <div class="question-text">${question.q}</div>
+        
+        <div class="question-context">${question.context}</div>
+        
+        ${!isChrome ? `<div class="browser-warning">לחוויה הטובה ביותר, מומלץ להשתמש בכרום. בדפדפנים אחרים תכונת התמלול בעברית עשויה להיות לא יציבה.</div>` : ''}
+        
+        ${isFileProtocol ? `<div class="browser-warning"><strong>הקלטה תעבוד, אבל התמלול האוטומטי לא יעבוד</strong> כי הקובץ נטען כקובץ מקומי (file://). זוהי דרישת אבטחה של כרום. הפתרון: ראי את ההוראות בתחתית הדף.</div>` : ''}
+        
+        <div class="speech-tip">
+          <strong>טיפ חשוב:</strong> בראיון אמיתי את מדברת, לא כותבת. נסי תחילה להקליט תשובה קולית - האזנה לעצמך היא הכלי הכי יעיל לזהות גמגומים, היסוסים, וטון לא בטוח.
+        </div>
+        
+        <div class="input-mode-toggle">
+          <button class="mode-btn ${state.inputMode === 'voice' ? 'active' : ''}" onclick="setInputMode('voice')">קולי (מומלץ)</button>
+          <button class="mode-btn ${state.inputMode === 'text' ? 'active' : ''}" onclick="setInputMode('text')">בכתב</button>
+        </div>
+        
+        <div id="voiceMode" style="display: ${state.inputMode === 'voice' ? 'block' : 'none'}">
+          <div class="recording-area">
+            <button class="record-btn" id="recordBtn" onclick="toggleRecording()">
+              <div class="record-icon"></div>
+            </button>
+            <div class="record-status" id="recordStatus">לחצי על הכפתור כדי להתחיל להקליט</div>
+            <div class="record-timer" id="recordTimer"></div>
+            <audio id="audioPlayer" class="audio-player" controls style="display: none;"></audio>
+          </div>
+          
+          ${hasSpeechRecognition && !isFileProtocol ? `
+            <div style="margin-top: 16px;">
+              <div id="transcriptStatus" style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; min-height: 16px;"></div>
+              <div class="live-transcript" id="liveTranscript"></div>
+            </div>
+          ` : ''}
+          
+          ${isFileProtocol ? `
+            <div style="margin-top: 16px;">
+              <div class="live-transcript">תמלול אוטומטי לא זמין במצב הנוכחי. אם תרצי להפעיל אותו, ראי את ההוראות בתחתית הדף.</div>
+            </div>
+          ` : ''}
+        </div>
+        
+        <div id="textMode" style="display: ${state.inputMode === 'text' ? 'block' : 'none'}">
+          <textarea 
+            id="answer" 
+            placeholder="כתבי כאן את התשובה שלך... זכרי - בראיון אמיתי תצטרכי לענות בדיבור. נסי לכתוב כפי שהיית אומרת בקול."
+            oninput="updateWordCount()"
+          ></textarea>
+          <div class="word-count" id="wordCount">0 מילים</div>
+        </div>
+        
+        <div class="button-row">
+          <button onclick="submitAnswer()">סיימתי - הראי לי משוב</button>
+        </div>
+        
+        ${isFileProtocol ? `
+          <div style="margin-top: 24px; padding: 16px; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border); font-size: 13px; color: var(--text-secondary); line-height: 1.7;">
+            <strong style="color: var(--accent);">איך להפעיל תמלול אוטומטי:</strong><br><br>
+            התמלול האוטומטי דורש שהקובץ ייטען דרך שרת מקומי, ולא בלחיצה כפולה על הקובץ. זאת דרישת אבטחה של כרום. אם התמלול לא חיוני - אפשר פשוט להמשיך עם ההקלטה בלעדיו, או לעבור למצב "בכתב". אם כן רוצים להפעיל אותו - הדרך הקלה ביותר:<br><br>
+            <strong>אפשרות 1 - העלאה לאינטרנט:</strong> להעלות את הקובץ לשירות חינמי כמו <a href="https://app.netlify.com/drop" target="_blank" style="color: var(--accent);">Netlify Drop</a> (גוררים את הקובץ לדף, מקבלים לינק) ולפתוח דרך הלינק.<br><br>
+            <strong>אפשרות 2 - שרת מקומי בפייתון</strong> (אם פייתון מותקן):<br>
+            1. פתחי <strong>שורת פקודה (cmd)</strong> בתיקייה של הקובץ<br>
+            2. הקלידי: <code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 4px;">python -m http.server 8000</code><br>
+            3. פתחי בכרום: <code style="background: var(--bg-primary); padding: 2px 6px; border-radius: 4px;">http://localhost:8000</code><br>
+            4. לחצי על שם הקובץ
+          </div>
+        ` : ''}
+      </div>
+    </div>
+  `;
+  
+  if (state.inputMode === 'voice' && hasSpeechRecognition && !isFileProtocol) {
+    setupSpeechRecognition();
+  }
+}
+
+function renderFeedback() {
+  const level = questionData['level' + state.currentLevel];
+  const question = level.questions[state.currentQuestionIndex];
+  const userAnswer = state.answers['level' + state.currentLevel][state.currentQuestionIndex] || '';
+  const audioBlob = state.audioRecordings['level' + state.currentLevel][state.currentQuestionIndex];
+  const totalQuestions = level.questions.length;
+  const isLastInLevel = state.currentQuestionIndex === totalQuestions - 1;
+  const isLastLevel = state.currentLevel === 3;
+  
+  let nextButtonText = 'לשאלה הבאה';
+  if (isLastInLevel && isLastLevel) nextButtonText = 'לסיכום הסימולציה';
+  else if (isLastInLevel) nextButtonText = 'לרמה הבאה';
+  
+  const speechSelfCheck = [
+    "האם דיברתי בקצב טבעי, לא מהר מדי ולא לאט מדי?",
+    "כמה פעמים אמרתי 'אהמ', 'אהה', או 'כאילו'?",
+    "האם הטון שלי נשמע בטוח, או מתנצל ולא בטוח?",
+    "האם היו רגעים של שקט שבהם פשוט קפאתי?"
+  ];
+  
+  app.innerHTML = `
+    <div class="container level-${state.currentLevel}">
+      <div class="header">
+        <h1>משוב על התשובה שלך</h1>
+        <div class="level-indicator">
+          <span class="level-badge">${level.name}</span>
+          <span>שאלה ${state.currentQuestionIndex + 1} מתוך ${totalQuestions}</span>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div class="question-number">השאלה הייתה</div>
+        <div class="question-text">${question.q}</div>
+        
+        ${audioBlob ? `
+          <div class="feedback-audio">
+            <h4>ההקלטה שלך - האזיני בקפידה</h4>
+            <audio controls class="audio-player" src="${URL.createObjectURL(audioBlob)}"></audio>
+          </div>
+        ` : ''}
+        
+        ${userAnswer ? `
+          <div class="your-answer">
+            <h4>${audioBlob ? 'תמלול התשובה שלך' : 'התשובה שלך'}</h4>
+            <p>${userAnswer}</p>
+          </div>
+        ` : ''}
+        
+        <div class="feedback-section">
+          <div class="feedback-block">
+            <h3>מה הפסיכולוגית באמת בודקת בשאלה הזו</h3>
+            <p>${question.evaluating}</p>
+          </div>
+          
+          <div class="feedback-block danger">
+            <h3>מלכודות נפוצות (מה לא לעשות)</h3>
+            <ul>
+              ${question.pitfalls.map(p => `<li>${p}</li>`).join('')}
+            </ul>
+          </div>
+          
+          <div class="feedback-block success">
+            <h3>מה כן לעשות</h3>
+            <ul>
+              ${question.dos.map(d => `<li>${d}</li>`).join('')}
+            </ul>
+          </div>
+          
+          <div class="self-check">
+            <h3>בדיקה עצמית - שאלי את עצמך:</h3>
+            ${question.selfCheck.map((s, i) => `
+              <label class="check-item">
+                <input type="checkbox" id="check-${i}">
+                <span>${s}</span>
+              </label>
+            `).join('')}
+          </div>
+          
+          ${audioBlob ? `
+            <div class="self-check" style="margin-top: 12px;">
+              <h3>בדיקת היבטי דיבור - תוך כדי האזנה להקלטה:</h3>
+              ${speechSelfCheck.map((s, i) => `
+                <label class="check-item">
+                  <input type="checkbox" id="speech-check-${i}">
+                  <span>${s}</span>
+                </label>
+              `).join('')}
+            </div>
+          ` : ''}
+        </div>
+        
+        <div class="button-row">
+          <button class="secondary" onclick="retryQuestion()">לנסות שוב</button>
+          <button onclick="nextQuestion()">${nextButtonText}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderCompletion() {
+  const totalAnswered = state.answers.level1.length + state.answers.level2.length + state.answers.level3.length;
+  const totalWords = [...state.answers.level1, ...state.answers.level2, ...state.answers.level3]
+    .reduce((sum, a) => sum + (a ? a.split(/\s+/).filter(w => w).length : 0), 0);
+  
+  app.innerHTML = `
+    <div class="container">
+      <div class="card completion">
+        <h2>סיימת את הסימולציה</h2>
+        <p>עברת את כל שלוש הרמות. זו הצלחה משמעותית.</p>
+        
+        <div class="stats">
+          <div class="stat-row">
+            <span>שאלות שענית עליהן</span>
+            <strong>${totalAnswered} / 23</strong>
+          </div>
+          <div class="stat-row">
+            <span>סך הכל מילים שכתבת</span>
+            <strong>${totalWords}</strong>
+          </div>
+          <div class="stat-row">
+            <span>רמות שעברת</span>
+            <strong>3 / 3</strong>
+          </div>
+        </div>
+        
+        <div class="feedback-block">
+          <h3>שלוש תובנות חשובות לקראת הראיון האמיתי</h3>
+          <ul>
+            <li>עקביות חשובה יותר ממוטיבציה. הפסיכולוגית בודקת אם העולם הפנימי שלך קוהרנטי</li>
+            <li>הראיון פועל לפי לוגיקת סינון - הימנעי מלתת סיבות לפסילה, יותר מאשר לנסות לאסוף סיבות לקבלה</li>
+            <li>אותנטיות מנצחת. הפסיכולוגית מאומנת לזהות הצגה - והאסטרטגיה הכי טובה היא להיות עצמך</li>
+          </ul>
+        </div>
+        
+        <div class="feedback-block warning">
+          <h3>המלצה אחרונה</h3>
+          <p>אל תעשי את הסימולציה הזו רק פעם אחת. תחזרי אליה אחרי כמה ימים, ותראי איך התשובות שלך משתנות. אם הן זהות לחלוטין - את אולי משננת ולא מתרגלת. אם הן השתפרו - את לומדת. ברגע שזה מרגיש לך טבעי לחלוטין, את מוכנה.</p>
+        </div>
+        
+        <div class="button-row">
+          <button onclick="restart()">להתחיל מההתחלה</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================
+// EVENT HANDLERS
+// ============================================
+
+function setInputMode(mode) {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  }
+  state.inputMode = mode;
+  render();
+}
+
+function setupSpeechRecognition() {
+  if (recognition) return;
+  
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    console.warn('SpeechRecognition API not available');
+    return;
+  }
+  
+  try {
+    recognition = new SpeechRecognition();
+    recognition.lang = 'he-IL';
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    
+    recognition.onstart = () => {
+      console.log('Speech recognition started');
+      const status = document.getElementById('transcriptStatus');
+      if (status) {
+        status.textContent = 'מאזין... דברי בעברית';
+        status.style.color = 'var(--success)';
+      }
+    };
+    
+    recognition.onresult = (event) => {
+      let interim = '';
+      let final = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          final += transcript + ' ';
+        } else {
+          interim += transcript;
+        }
+      }
+      if (final) {
+        currentTranscript += final;
+      }
+      interimTranscript = interim;
+      updateLiveTranscript();
+    };
+    
+    recognition.onerror = (event) => {
+      console.error('Speech recognition error:', event.error, event);
+      const status = document.getElementById('transcriptStatus');
+      if (!status) return;
+      
+      if (event.error === 'no-speech') {
+        status.textContent = 'לא זוהה דיבור - נסי לדבר ברור יותר';
+        status.style.color = 'var(--warning)';
+      } else if (event.error === 'audio-capture') {
+        status.textContent = 'בעיה בגישה למיקרופון';
+        status.style.color = 'var(--danger)';
+      } else if (event.error === 'not-allowed') {
+        status.textContent = 'גישה למיקרופון נדחתה - אשרי בהגדרות הדפדפן';
+        status.style.color = 'var(--danger)';
+      } else if (event.error === 'network') {
+        status.textContent = 'שגיאת רשת - תמלול דורש חיבור אינטרנט וטעינה דרך שרת (לא file://)';
+        status.style.color = 'var(--danger)';
+      } else if (event.error === 'service-not-allowed') {
+        status.textContent = 'שירות התמלול לא זמין - יש להריץ את הקובץ דרך שרת מקומי';
+        status.style.color = 'var(--danger)';
+      } else if (event.error === 'aborted') {
+        // Normal when stopping
+      } else {
+        status.textContent = 'שגיאה: ' + event.error;
+        status.style.color = 'var(--danger)';
+      }
+    };
+    
+    recognition.onend = () => {
+      console.log('Speech recognition ended');
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        try {
+          recognition.start();
+          console.log('Speech recognition restarted');
+        } catch (e) {
+          console.error('Failed to restart recognition:', e);
+        }
+      }
+    };
+    
+    console.log('Speech recognition initialized successfully');
+  } catch (e) {
+    console.error('Failed to initialize speech recognition:', e);
+    recognition = null;
+  }
+}
+
+function updateLiveTranscript() {
+  const el = document.getElementById('liveTranscript');
+  if (el) {
+    el.innerHTML = currentTranscript + '<span class="interim">' + interimTranscript + '</span>';
+  }
+}
+
+async function toggleRecording() {
+  if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+    await startRecording();
+  } else {
+    stopRecording();
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    currentTranscript = '';
+    interimTranscript = '';
+    currentAudioBlob = null;
+    
+    mediaRecorder = new MediaRecorder(stream);
+    
+    mediaRecorder.ondataavailable = (e) => {
+      audioChunks.push(e.data);
+    };
+    
+    mediaRecorder.onstop = () => {
+      currentAudioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+      const audioUrl = URL.createObjectURL(currentAudioBlob);
+      const player = document.getElementById('audioPlayer');
+      if (player) {
+        player.src = audioUrl;
+        player.style.display = 'block';
+      }
+      stream.getTracks().forEach(track => track.stop());
+    };
+    
+    mediaRecorder.start();
+    recordingStartTime = Date.now();
+    
+    const btn = document.getElementById('recordBtn');
+    const status = document.getElementById('recordStatus');
+    const timer = document.getElementById('recordTimer');
+    if (btn) btn.classList.add('recording');
+    if (status) status.textContent = 'מקליט... לחצי שוב לעצירה';
+    if (timer) timer.classList.add('recording');
+    
+    timerInterval = setInterval(updateTimer, 100);
+    
+    if (recognition) {
+      try {
+        recognition.start();
+      } catch (e) {
+        console.log('Recognition start error:', e);
+      }
+    }
+    
+    const player = document.getElementById('audioPlayer');
+    if (player) player.style.display = 'none';
+    
+    const transcriptEl = document.getElementById('liveTranscript');
+    if (transcriptEl) transcriptEl.innerHTML = '';
+    
+  } catch (err) {
+    alert('לא ניתן לגשת למיקרופון. אנא אשרי גישה למיקרופון בהגדרות הדפדפן ונסי שוב.');
+    console.error('Microphone error:', err);
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    mediaRecorder.stop();
+  }
+  if (recognition) {
+    try {
+      recognition.stop();
+    } catch (e) {}
+  }
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+  
+  const btn = document.getElementById('recordBtn');
+  const status = document.getElementById('recordStatus');
+  const timer = document.getElementById('recordTimer');
+  if (btn) btn.classList.remove('recording');
+  if (status) status.textContent = 'ההקלטה הסתיימה. האזיני להקלטה למטה, או לחצי על הכפתור להקליט מחדש.';
+  if (timer) timer.classList.remove('recording');
+}
+
+function updateTimer() {
+  const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+  const minutes = Math.floor(elapsed / 60);
+  const seconds = elapsed % 60;
+  const timer = document.getElementById('recordTimer');
+  if (timer) {
+    timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
+}
+
+function startLevel(level) {
+  state.currentLevel = level;
+  state.currentQuestionIndex = 0;
+  state.screen = 'levelIntro';
+  render();
+}
+
+function beginQuestions() {
+  state.screen = 'question';
+  render();
+}
+
+function submitAnswer() {
+  if (mediaRecorder && mediaRecorder.state === 'recording') {
+    stopRecording();
+  }
+  
+  let answer = '';
+  if (state.inputMode === 'text') {
+    const textarea = document.getElementById('answer');
+    answer = textarea ? textarea.value.trim() : '';
+  } else {
+    answer = currentTranscript.trim();
+  }
+  
+  state.answers['level' + state.currentLevel][state.currentQuestionIndex] = answer;
+  state.audioRecordings['level' + state.currentLevel][state.currentQuestionIndex] = currentAudioBlob;
+  
+  currentAudioBlob = null;
+  currentTranscript = '';
+  interimTranscript = '';
+  
+  state.screen = 'feedback';
+  render();
+}
+
+function retryQuestion() {
+  currentAudioBlob = null;
+  currentTranscript = '';
+  interimTranscript = '';
+  state.screen = 'question';
+  render();
+}
+
+function nextQuestion() {
+  currentAudioBlob = null;
+  currentTranscript = '';
+  interimTranscript = '';
+  
+  const level = questionData['level' + state.currentLevel];
+  const isLastInLevel = state.currentQuestionIndex === level.questions.length - 1;
+  
+  if (isLastInLevel) {
+    if (state.currentLevel === 3) {
+      state.screen = 'completion';
+    } else {
+      state.currentLevel += 1;
+      state.currentQuestionIndex = 0;
+      state.screen = 'levelIntro';
+    }
+  } else {
+    state.currentQuestionIndex += 1;
+    state.screen = 'question';
+  }
+  render();
+}
+
+function restart() {
+  state = {
+    screen: 'welcome',
+    currentLevel: 1,
+    currentQuestionIndex: 0,
+    answers: { level1: [], level2: [], level3: [] },
+    audioRecordings: { level1: [], level2: [], level3: [] },
+    inputMode: 'voice'
+  };
+  currentAudioBlob = null;
+  currentTranscript = '';
+  interimTranscript = '';
+  render();
+}
+
+function updateWordCount() {
+  const text = document.getElementById('answer').value;
+  const wordCount = text.trim().split(/\s+/).filter(w => w).length;
+  document.getElementById('wordCount').textContent = wordCount + ' מילים';
+}
+
+// Initialize
+render();
+</script>
+</body>
+</html>
